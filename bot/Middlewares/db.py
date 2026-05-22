@@ -14,11 +14,11 @@ class DatabaseMiddleware(BaseMiddleware):
         self.session = session
 
     async def on_process_message(self, message: types.Message, data: Dict):
-        with self.session() as session:
-            db = Database(session=session)
-            data["db"] = db
+        db = Database(session=self.session())
+        data["db"] = db
+        # async with self.session() as session:
+        #     db = Database(session=session)
 
     async def on_process_callback_query(self, call: types.CallbackQuery, data: Dict):
-        with self.session() as session:
-            db = Database(session=session)
-            data["db"] = db
+        db = Database(session=self.session())
+        data["db"] = db

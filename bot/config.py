@@ -1,12 +1,18 @@
-class Config:
-    def __init__(self):
-        self.BOT_TOKEN = ""
-        self.admin_list = []
-        self.assistants_list = []
-        self.SUPER_USERS = []
-        self.DB_HOST = ""
-        self.DB_USER = ""
-        self.DB_PASS = ""
-        self.DB_NAME = ""
+from pydantic_settings import BaseSettings
 
-config = Config()
+
+class Settings(BaseSettings):
+    BOT_TOKEN: str
+    ADMINS: str
+    ASSISTANTS: str 
+    SUPER_USERS: str 
+    POSTGRES_CONTAINE_NAME: str 
+    POSTGRES_USER: str 
+    POSTGRES_PASSWORD: str 
+    POSTGRES_DB: str
+
+
+    class Config:
+        env_file = ".env"
+
+config = Settings()

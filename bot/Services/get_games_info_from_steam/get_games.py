@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup as bs
 import requests
-import psycopg2
-from config import config
+# import psycopg2
+# from config import config
 
 
 
@@ -27,16 +27,16 @@ def start_parse():
         "popularity": 0,
     }
 
-    conn = psycopg2.connect(
-        host=config.DB_HOST,
-        user=config.DB_USER,
-        password=config.DB_PASS,
-        database=config.DB_NAME
-    )
-    cursor = conn.cursor()
-
+    # conn = psycopg2.connect(
+    #     host=config.DB_HOST,
+    #     user=config.DB_USER,
+    #     password=config.DB_PASS,
+    #     database=config.DB_NAME
+    # )
+    # cursor = conn.cursor()
+    path = "bot/Services/get_games_info_from_steam/"
     for name in names:
-        with open(name + ".html", "r") as file:
+        with open(path + name + ".html", "r") as file:
             soup = bs(file.read(), "html.parser")
             games = soup.find_all("div", {"class": "_3rrH9dPdtHVRMzAEw82AId"})
             for game in games:
@@ -65,14 +65,17 @@ def start_parse():
                     except:
                         game_info["sysreq"] = soup.find("div", {"class": "game_area_sys_req_full"}).find("p").text
                 # print(soup.find_all("div", {"class": "user_reviews_summary_row"})[1].find("span", {"class": "responsive_hidden"}).text)
+
                 game_info["popularity"] = int("".join(soup.find_all("div", {"class": "user_reviews_summary_row"})[1].find("span", {"class": "responsive_hidden"}).text.split("(")[-1].split(")")[0].split(",")))
 
-                print(game_info)
+                # print(game_info)
 
-                cursor.execute(
-                    "INSERT INTO games (image, name, developer, price, genre, date, alone, koop, description, sysreq, popularity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", list(game_info.values()))
-                conn.commit()
+                yield game_info
+
+                # cursor.execute(
+                #     "INSERT INTO games (image, name, developer, price, genre, date, alone, koop, description, sysreq, popularity) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", list(game_info.values()))
+                # conn.commit()
 
 
-if __name__ == '__main__':
-    start_parse()
+# if __name__ == '__main__':
+#     start_parse()

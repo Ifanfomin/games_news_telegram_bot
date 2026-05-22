@@ -1,5 +1,8 @@
 aiogram==2.23.1
+pydantic-settings==2.10.1
 psycopg2-binary
 sqlalchemy
 beautifulsoup4
 requests
+asyncpg
+aiohttp_socks

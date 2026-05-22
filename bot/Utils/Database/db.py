@@ -1,20 +1,17 @@
 # Подключение к базе данных PostgreSQL
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import declarative_base
 from sqlalchemy import create_engine, MetaData, Table, Column, Text, Integer, BLOB, Boolean
 from sqlalchemy.orm import declarative_base, sessionmaker
 
 from bot.config import config
 
-host=config.DB_HOST
-user=config.DB_USER
-password=config.DB_PASS
-database=config.DB_NAME
-DATABASE_URL = f"postgresql+psycopg2://{user}:{password}@{host}:5432/{database}"
+
+DATABASE_URL = f"postgresql+asyncpg://{config.POSTGRES_USER}:{config.POSTGRES_PASSWORD}@postgres:5432/{config.POSTGRES_DB}"  # postgres - имя сервиса в docker-compose.uml
 
 # Создание движка подключения
-# engine = create_async_engine(DATABASE_URL)
-engine = create_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL, echo=True)
+# engine = create_engine(DATABASE_URL)
 
 
 metadata = MetaData()
@@ -44,13 +41,23 @@ games = Table(
     Column("popularity", Integer())
 )
 
-metadata.create_all(engine)
+# metadata.create_all(engine)
+async def init_models():
+    async with engine.begin() as conn:
+        # синхронный вызов create_all оборачивается в run_sync
+        await conn.run_sync(Base.metadata.create_all)
 
 
 # Базовый класс для декларативных моделей
 Base = declarative_base()
 
 # session = async_sessionmaker(bind=engine)
-session = sessionmaker(bind=engine)
+session = sessionmaker(
+    bind=engine,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+
+    
 
 

@@ -25,14 +25,7 @@ dp.middleware.setup(LoggingMiddleware())
 
 # Преобразование конфигурации в словарь
 config_dict = {
-    "BOT_TOKEN": config.BOT_TOKEN,
-    "ADMINS": config.ADMINS,  # Используйте преобразованный список
-    "ASSISTANTS": config.ASSISTANTS,  # Используйте преобразованный список
-    "SUPER_USERS": config.SUPER_USERS,
-    "DB_HOST": config.DB_HOST,
-    "DB_USER": config.DB_USER,
-    "DB_PASS": config.DB_PASS,
-    "DB_NAME": config.DB_NAME
+    "BOT_TOKEN": config.BOT_TOKEN
 }
 
 # Мидлварь для управления окружением (передача конфигурации как словарь)
@@ -43,12 +36,11 @@ dp.middleware.setup(RoleMiddleware())
 
 # Модлварь для БД
 dp.middleware.setup(DatabaseMiddleware(session=session))
-
 # Мидлварь для парсинга новостей
 dp.middleware.setup(ParseNewsMiddleware())
 
 # Создание меню команд
-# set_commands(bot)
+# bot.set_my_commands([])
 
 # Регистрация хендлеров
 from bot.Handlers.common import register_common_handlers

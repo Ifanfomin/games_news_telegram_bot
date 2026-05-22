@@ -7,12 +7,15 @@ from bot.States.user.take_game_type import WatchGamesListStates
 from bot.Keyboards.Inline.user.watch_games_list_keyboards import take_game_type_keyboard, game_prev_next_keyboard
 
 
-async def take_game_type(call: types.CallbackQuery, state: FSMContext):
+async def take_game_type(call: types.CallbackQuery, db: Database, state: FSMContext):
     await state.set_state(WatchGamesListStates.waiting_take_game_type.state)
 
     photo = InputMediaPhoto("https://github.com/Ifanfomin/tg_bot_automatic_sales_funnel/blob/master/imgs/widht_logo.jpg?raw=true")
     await call.message.edit_media(media=photo)
     await call.message.edit_caption("Выбери интересующий жанр:", reply_markup=take_game_type_keyboard())
+    
+    await db.add_games()
+
 
 
 async def show_game(call: types.CallbackQuery, game_id: int, db: Database):
